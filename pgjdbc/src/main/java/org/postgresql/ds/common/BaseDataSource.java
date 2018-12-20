@@ -233,6 +233,21 @@ public abstract class BaseDataSource implements CommonDataSource, Referenceable 
   }
 
   /**
+   * @return command line options for this connection
+   */
+  public String getOptions() {
+    return PGProperty.OPTIONS.get(properties);
+  }
+
+  /**
+   * Set command line options for this connection
+   * @param options string to set options to
+   */
+  public void setOptions(String options) {
+    PGProperty.OPTIONS.set(properties, options);
+  }
+
+  /**
    * @return login timeout
    * @see PGProperty#LOGIN_TIMEOUT
    */
@@ -1109,6 +1124,9 @@ public abstract class BaseDataSource implements CommonDataSource, Referenceable 
 
     Properties p = org.postgresql.Driver.parseURL(url, null);
 
+    if (p == null ) {
+      throw new IllegalArgumentException("URL invalid " + url);
+    }
     for (PGProperty property : PGProperty.values()) {
       if (!this.properties.containsKey(property.getName())) {
         setProperty(property, property.get(p));
